@@ -20,6 +20,7 @@ watch: tsc FORCE
 	shopt -s globstar; while true; do inotifywait -e close_write ./scripts/**/* &>/dev/null;clear; sleep 0.5; make reload; make milestone; echo "Done!"; sleep 1; done
 
 reload:
+	sed -i "s/, DEVMODESEDHERE//g" extension/generated/main.js
 	kill $$(<ncpid) || true
 	sh -c 'nc -lk 3333 >/dev/null & echo $$!>ncpid'
 

@@ -10,8 +10,12 @@
     "unlimitedStorage",
     "favicon"
   ],
+  "icons": {
+    "32": "img/icon32.png"
+  },
+  "action": {},
   "background": {
-    "service_worker": "generated/service-worker.js"
+    "service_worker": "generated/background.js"
   },
   "action": {
     "default_title": "Show tab inspector"

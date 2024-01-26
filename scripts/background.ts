@@ -1,4 +1,4 @@
-chrome.action.onClicked.addListener(function() {
+chrome.browserAction.onClicked.addListener(function() {
   chrome.windows.create({
     url: chrome.runtime.getURL("panel.html"),
     type: "popup",
@@ -39,6 +39,7 @@ chrome.tabs.onRemoved.addListener(id => {
   })
 });
 chrome.runtime.onMessage.addListener(({ type, data }) => {
+  console.log({ type, data });
   switch (type) {
     case "init":
       refresh();
@@ -53,7 +54,7 @@ chrome.runtime.onMessage.addListener(({ type, data }) => {
           chrome.tabs.remove(id);
           break;
         case "new":
-          chrome.tabs.create({});
+          chrome.tabs.create(opts);
           break;
       }
       break;
