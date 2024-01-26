@@ -1,0 +1,14 @@
+node_modules/
+web-ext-artifacts/
+firefox/
+extension/generated
+extension/scripts
+extension/.web-extension-id
+extension/manifest.json
+extension/MILESTONE
+ncpid
+sign.sh
+pnpm-lock.yaml
+
+extension.crx
+extension.pem

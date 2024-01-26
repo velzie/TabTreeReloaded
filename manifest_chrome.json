@@ -1,0 +1,20 @@
+{
+  "name": "TabTree Reloaded",
+  "description": "A feature-packed vertical tab tree for power users.",
+  "version": "0.3",
+  "permissions": [
+    "storage",
+    "tabs",
+    "identity",
+    "contextMenus",
+    "unlimitedStorage",
+    "favicon"
+  ],
+  "background": {
+    "service_worker": "generated/service-worker.js"
+  },
+  "action": {
+    "default_title": "Show tab inspector"
+  },
+  "manifest_version": 3
+}

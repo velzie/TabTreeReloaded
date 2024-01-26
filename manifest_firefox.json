@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "TabTree Reloaded",
+  "description": "A feature-packed vertical tab tree for power users.",
+  "version": "1.4",
+
+  "background": {
+    "scripts": [
+      "generated/background-ff.js"
+    ],
+    "persistent": false
+  },
+
+
+  "permissions": [
+    "storage",
+    "tabs",
+    "identity",
+    "contextMenus",
+    "chrome://mozapps/skin/extensions/*",
+    "unlimitedStorage"
+  ]
+
+}
