@@ -43,25 +43,24 @@ function TreeNode(this: TreeNode) {
   this.children ??= [];
   this.children.forEach(c => c.$.parent = this);
 
-  let css = styled.new`
+  this.css = css`
   self {
     width:100%;
     user-select:none;
-    border-bottom: ${use(this.showInsert, b => b && "5px solid red")};
     padding-left:17px;
 
     background: url(img/lineto_subnode_s1.png) 7px 8px no-repeat, url(img/line_vertical_s1.png) 6px 0px repeat-y;
-    background-color: ${use([this.hoverfx, this.dragging], (dragging, hoverfx) => ((hoverfx && palette.raised) || (dragging && palette.highlight) || "transparent"))} !important;
     margin-right:4px;
     padding-top: 1px;
     padding-bottom: 1px;
     margin-bottom: -1px;
+    overflow: hidden;
   }
 
   .content {
     padding-left:15px;
     background-color: ${use(this.activeId, (active) => active === this.id ? palette.raised : "transparent")} !important;
-    background: url(img/${use(this.collapsed, c => c ? "minimized" : (this.children.length > 0 ? "unminimized" : "no"))}_children.png) 0px -1px no-repeat;
+    background: url(img/${use([this.children, this.collapsed], (c, children) => c ? "minimized" : (children.length > 0 ? "unminimized" : "no"))}_children.png) 0px -1px no-repeat;
     color: ${use(this.id, id => id === -1 ? palette.muted : palette.text)}
   }
   .content > div{
@@ -83,16 +82,29 @@ function TreeNode(this: TreeNode) {
     return elm.$;
   };
 
+  let wasInserting: TreeNode;
+  let wasHovering: TreeNode;
+
+  let raised = rule`background-color: ${palette.raised} !important`;
+  let dragged = rule`background-color: ${palette.highlight} !important`;
+  let insert = rule`border-bottom: 5px solid red`;
   return (
     <li
-      css={css} draggable
+      class={[
+        use(this.hoverfx, h => h && raised),
+        use(this.dragging, h => h && dragged),
+        use(this.showInsert, h => h && insert),
+        rule`background-color: transparent;`
+      ]}
+      draggable
       on:dragstart={(e: DragEvent) => {
         e.stopPropagation();
       }}
       on:drag={(e: DragEvent) => {
+        // @ts-expect-error
+        wasInserting?.showInsert = false;
         e.stopPropagation();
         this.dragging = true;
-        this.top().clearInsert();
         if (!this.parent) return;
 
         let target = tgtfromcursor();
@@ -102,16 +114,25 @@ function TreeNode(this: TreeNode) {
           let rect = child.getBoundingClientRect();
           if (dumbass_fucking_firefox_clienty > rect.top && dumbass_fucking_firefox_clienty < rect.bottom) {
             child.$.showInsert = true;
+            // @ts-expect-error
+            wasHovering?.hoverfx = false;
+            wasInserting = child.$;
             return;
           }
         }
 
+        // @ts-expect-error
+        wasHovering?.hoverfx = false;
         target.hoverfx = true;
+        wasHovering = target;
       }}
       on:dragend={(e: DragEvent) => {
+        // @ts-expect-error
+        wasInserting?.showInsert = false;
+        // @ts-expect-error
+        wasHovering?.hoverfx = false;
         e.stopPropagation();
         this.dragging = false;
-        this.top().clearInsert();
         if (!this.parent) return;
 
         let target = tgtfromcursor();
@@ -188,12 +209,11 @@ function TreeNode(this: TreeNode) {
           {use(this.content)}
         </div>
       </div>
-      <ul class="subnodes" css={styled.new`
-  self {
+      <ul class={["subnodes", rule`
     max-height: ${use(this.height, p => (p != null && p + "px") || "max-content")};
     transition: all ${use(this.animsecs)}s;
-    overflow: hidden;
-  }`}>
+    overflow: hidden;`
+      ]}>
 
         {use(this.children)}
       </ul>

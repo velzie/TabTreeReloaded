@@ -1,5 +1,5 @@
 var devmode, DEVMODESEDHERE = 1;
-var app;
+var app: ThisParameterType<typeof App>;
 
 window.addEventListener("load", () => {
   let root = <App />;

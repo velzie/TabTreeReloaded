@@ -12,17 +12,18 @@ chrome.storage.local.get("palette", (stored: any) => {
   Object.assign(palette, stored.palette);
 })
 
-function App(this: {
+function App(this: DLComponent<{
   tree: TreeNode,
-  activetab: number | null
-}) {
-
-  let style = css`
+  activetab: number | null,
+  oldactivetab: number | null,
+}>) {
+  this.css = css`
 self {
   background-color: ${use(palette.base)};
   color: ${use(palette.text)};
   width: 100%;
   height: 100%;
+  overflow:hidden;
 }
 #treecontainer{
   height:100%;
@@ -32,7 +33,7 @@ self {
 `
 
   this.activetab = null;
-  let oldactivetab: number | null = null;
+  this.oldactivetab = null;
 
 
   const save = () => {
@@ -44,7 +45,8 @@ self {
         children: tree.children.map(c => ser(c.$))
       }
     }
-    chrome.storage.local.set({ root: ser(app.tree), palette });
+    chrome.storage.local.set({ root: ser(this.tree) });
+    chrome.storage.local.set({ palette: { ...palette } }); // fixes firefox bug
   }
 
   let waitontabnode: TreeNode | null = null;
@@ -105,7 +107,7 @@ self {
   setInterval(save, 1000);
   chrome.runtime.onMessage.addListener(({ type, data }) => {
     if (type === "active") {
-      oldactivetab = this.activetab;
+      this.oldactivetab = this.activetab;
       this.activetab = data;
     }
 
@@ -125,7 +127,7 @@ self {
             continue;
           }
 
-          let activetree = this.tree.findId(this.activetab) || this.tree.findId(oldactivetab);
+          let activetree = this.tree.findId(this.activetab) || this.tree.findId(this.oldactivetab);
           if (activetree == null)
             activetree = this.tree;
           node = makenode(tab.id, activetree).$;
@@ -163,11 +165,11 @@ self {
   }));
 
   return (
-    <div css={style}>
+    <div>
+      <Toolbar />
       <div id="treecontainer">
         <TreeNode bind:this={use(this.tree)} id={-1} favicon="/img/icon32.png" content="Tab Tree" />
       </div>
-      <Toolbar />
     </div>
   )
 }

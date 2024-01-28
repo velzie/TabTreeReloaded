@@ -1,31 +1,34 @@
-function Toolbar(this: {
+function Toolbar(this: DLComponent<{
   showsettings: boolean,
-}) {
-  let css = styled.new`
+}>) {
+  this.css = css`
   self {
-    position: fixed;
-    bottom:0;
+    position:sticky;
+    top:0;
     display: flex;
     flex-direction: column;
 
     background-color: ${use(palette.surface)};
     width:100%;
 
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    display: flex;
+    align-items: center;
   }
 
   #toolbar {
+    width:100%;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    padding-top: 1.5em;
-    padding-bottom: 1.5em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
   }
 
   button {
     background-color: ${use(palette.raised)};
-    padding: 0.5em;
+    padding: 0.4em;
     border: none;
     border-radius: 5px;
     color: ${use(palette.text)};
@@ -34,7 +37,6 @@ function Toolbar(this: {
   #settings{
     display: ${use(this.showsettings, s => s && "flex" || "none")};
     flex-direction:column;
-    padding-left: 2em;
     padding-bottom:3em;
     width: fit-content;
   }
@@ -44,9 +46,11 @@ function Toolbar(this: {
 `
 
   return (
-    <div css={css}>
+    <div>
       <div id="toolbar">
         <button on:click={() => {
+          app.oldactivetab = null;
+          app.activetab = null;
           chrome.runtime.sendMessage({
             type: "tab",
             data: {
@@ -79,10 +83,10 @@ function Toolbar(this: {
   )
 }
 
-function Input(this: {
+function Input(this: DLComponent<{
   value: string
-}, slot) {
-  let css = styled.new`
+}>, slot) {
+  this.css = css`
 self {
   display: flex;
   justify-content: left;
@@ -108,7 +112,7 @@ input {
 
 
   return (
-    <div css={css}>
+    <div>
       <div class="text">{slot}</div>
       <input bind:value={use(this.value)} />
     </div>

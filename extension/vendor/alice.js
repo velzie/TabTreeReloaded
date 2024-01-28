@@ -1,2 +1,515 @@
-(()=>{var g=[],E=Symbol(),_=Symbol(),x=Symbol();Object.defineProperty(window,"use",{get:()=>(g=[],(r,s)=>{let n=g;return g=[],n[_]=!0,s&&(n[E]=s),n})});Object.assign(window,{h:j,html:N,stateful:O,handle:h,useValue:A,css:w,styled:{new:w}});function O(r){return r[x]=[],new Proxy(r,{get(n,e,c){return g.push({target:n,property:e,proxy:c}),Reflect.get(n,e,c)},set(n,e,c){for(let t of n[x])t(n,e,c);return Reflect.set(n,e,c)}})}function p(r){return r instanceof Array&&_ in r}function h(r,s){if(!p(r))throw new Error("Not an AliceJS reference set!");if(E in r){let n=r[E],e=[],c=[],t=new Map,o=[],i=(f,l,d)=>{e.includes(l)&&c.includes(f)&&(t.get(f)[l]=d)},a=()=>{let f=o.map(d=>t.get(d[0])[d[1]]),l=n(...f.reverse());s(l)};for(let f of r){let l=f.target,d=f.property;e.push(d),c.push(l),o.push([l,d]),t.has(l)||t.set(l,{}),i(l,d,l[d]),l[x].push((u,b,m)=>{i(u,b,m),a()})}a()}else{let n=r[r.length-1],e=(c,t,o)=>{t===n.property&&c===n.target&&s(o)};n.target[x].push(e),e(n.target,n.property,n.target[n.property])}}function A(r){let s=r[r.length-1];return s.proxy[s.property]}function j(r,s,...n){if(typeof r=="function"){let t=O(Object.create(r.prototype));for(let a in s){let f=s[a];if(p(f)&&a.startsWith("bind:")){let l=f[f.length-1],d=a.substring(5);if(d=="this")l.proxy[l.property]=t;else{let u=!1;h(f,b=>{if(u){u=!1;return}u=!0,t[d]=b}),h(use(t[d]),b=>{if(u){u=!1;return}u=!0,l.proxy[l.property]=b})}delete s[a]}}Object.assign(t,s);let o=[];for(let a of n)y(a,o.push.bind(o));let i=r.apply(t,[o]);return i.$=t,t.root=i,i}let e=document.createElement(r);for(let t of n)y(t,e.appendChild.bind(e));if(!s)return e;function c(t,o){if(!(t in s))return;let i=s[t];o(i),delete s[t]}if(c("before",t=>{y(t())}),c("if",t=>{let o=s.then,i=s.else;if(p(t))o&&e.appendChild(o),i&&e.appendChild(i),h(t,a=>{o?a?(o.style.display="",i&&(i.style.display="none")):(o.style.display="none",i&&(i.style.display="")):a?e.style.display="":e.style.display="none"});else if(o)t?e.appendChild(o):i&&e.appendChild(i);else if(t)e.appendChild(o);else if(i)e.appendChild(i);else return e.style.display="none",document.createTextNode("");delete s.then,delete s.else}),"for"in s&&"do"in s){let t=s.for,o=s.do;if(p(t)){let i=[],a=[];h(t,f=>{if(Object.keys(f).length&&Object.keys(f).length==a.length){let l=0;for(let d in f){if(v(f[d],a[d]))continue;let u=o(f[d],d,f);e.replaceChild(u,i[l]),i[l]=u,l+=1}a=Object.keys(JSON.parse(JSON.stringify(f)))}else{for(let l of i)l.remove();for(let l in f){let d=f[l],u=o(d,l,f);u instanceof HTMLElement&&(i.push(u),e.appendChild(u))}a=[]}})}else for(let i in t){let a=t[i],f=o(a,i,t);f instanceof Node&&e.appendChild(f)}delete s.for,delete s.do}c("after",t=>{y(t())});for(let t in s){let o=s[t];if(p(o)&&t.startsWith("bind:")){let i=o[o.length-1],a=t.substring(5);a=="this"?i.proxy[i.property]=e:a=="value"?(h(o,f=>e.value=f),e.addEventListener("change",()=>{i.proxy[i.property]=e.value})):a=="checked"&&(h(o,f=>e.checked=f),e.addEventListener("click",()=>{i.proxy[i.property]=e.checked})),delete s[t]}}for(let t in s){let o=s[t];p(o)?h(o,i=>{C(e,t,i)}):C(e,t,o)}return c("css",t=>{e.classList.add(t),e.classList.add("self")}),e}function y(r,s){if(p(r)){let n=[];h(r,e=>{if(n.length>1)n.forEach(c=>c.remove()),n=y(e,s);else if(n.length>0){let c=n[0];n=y(e,s),n[0]?c.replaceWith(n[0]):c.remove()}else n=y(e,s)})}else{if(r instanceof Node)return s(r),[r];if(r instanceof Array){let n=[];for(let e of r)n=n.concat(y(e,s));return n}else{let n=document.createTextNode(r);return s(n),[n]}}}function C(r,s,n){if(s==="class"){r.className=n;return}if(typeof n=="function"&&s==="mount"){n(r);return}if(typeof n=="function"&&s.startsWith("on:")){let e=s.substring(3);for(let c of e.split("$"))r.addEventListener(c,(...t)=>{window.$el=r,n(...t)});return}if(typeof n=="function"&&s.startsWith("observe")){let e=window[`${s.substring(8)}Observer`];if(!e){console.error(`Observer ${s} does not exist`);return}new e(t=>{for(let o of t)window.$el=r,n(o)}).observe(r);return}r.setAttribute(s,n)}function S(r,s){let n=document.implementation.createHTMLDocument(""),e=document.createElement("style");n.body.appendChild(e);let c="";e.textContent=s;for(let t of e.sheet.cssRules)t.selectorText=t.selectorText.includes("self")?`.${r}.self${t.selectorText.replace("self","")}`:`.${r} ${t.selectorText}`,c+=`${t.cssText}
-`;return c}function w(r,...s){let n=`alicecss-${Array(16).fill(0).map(()=>Math.floor(Math.random()*16).toString(16)).join("")}`,e=document.createElement("style");document.head.appendChild(e);let c=[];for(let t in r)if(c.push(r[t]),s[t]){let o=s[t];if(p(o)){let i=c.length,a;h(o,f=>{c[i]=String(f);let l=c.join("");l!=a&&(e.textContent=S(n,l)),a=l})}else c.push(String(o))}return e.textContent=S(n,c.join("")),n}function N(r,...s){let n="",e={};for(let o in r){let i=r[o],a=s[o];if(n+=i,o<s.length){let f=Object.values(e).findIndex(l=>l==a);if(f!==-1)n+=Object.keys(e)[f];else{let l="m"+Array(16).fill(0).map(()=>Math.floor(Math.random()*16).toString(16)).join("");e[l]=a,n+=l}}}let c=new DOMParser().parseFromString(n,"text/html");if(c.body.children.length!==1)throw"html builder needs exactly one child";function t(o){let i=o.nodeName.toLowerCase();if(i==="#text")return o.textContent;i in e&&(i=e[i]);let a=[...o.childNodes].map(t);for(let l=0;l<a.length;l++){let d=a[l];if(typeof d=="string")for(let[u,b]of Object.entries(e)){if(!d)break;if(!d.includes(u))continue;let m;[m,d]=d.split(u),a=[...a.slice(0,l),m,b,d,...a.slice(l+1)],l+=2}}let f={};for(let l of[...o.attributes]){let d=l.nodeValue;d in e&&(d=e[d]),f[l.name]=d}return j(i,f,a)}return t(c.body.children[0])}function v(r,s){let n=Object.keys(r),e=Object.keys(s);if(n.length!==e.length)return!1;for(let c of n){let t=r[c],o=s[c],i=k(t)&&k(o);if(i&&!v(t,o)||!i&&t!==o)return!1}return!0}function k(r){return r!=null&&typeof r=="object"}})();
+(() => {
+  // AliceJS.js
+  var __reference_stack = [];
+  var ALICEJS_REFERENCES_MAPPING = Symbol();
+  var ALICEJS_REFERENCES_MARKER = Symbol();
+  var ALICEJS_STATEFUL_LISTENERS = Symbol();
+  Object.defineProperty(window, "use", {
+    get: () => {
+      __reference_stack = [];
+      return (_sink, mapping) => {
+        let references = __reference_stack;
+        __reference_stack = [];
+        references[ALICEJS_REFERENCES_MARKER] = true;
+        if (mapping)
+          references[ALICEJS_REFERENCES_MAPPING] = mapping;
+        return references;
+      };
+    }
+  });
+  Object.assign(window, { h, html, stateful, handle, useValue, css, rule, styled: { new: css, rule } });
+  function stateful(target) {
+    target[ALICEJS_STATEFUL_LISTENERS] = [];
+    const proxy = new Proxy(target, {
+      get(target2, property, proxy2) {
+        __reference_stack.push({ target: target2, property, proxy: proxy2 });
+        return Reflect.get(target2, property, proxy2);
+      },
+      set(target2, property, val) {
+        for (const listener of target2[ALICEJS_STATEFUL_LISTENERS]) {
+          listener(target2, property, val);
+        }
+        return Reflect.set(target2, property, val);
+      }
+    });
+    return proxy;
+  }
+  function isAJSReferences(arr) {
+    return arr instanceof Array && ALICEJS_REFERENCES_MARKER in arr;
+  }
+  function handle(references, callback) {
+    if (!isAJSReferences(references))
+      throw new Error("Not an AliceJS reference set!");
+    if (ALICEJS_REFERENCES_MAPPING in references) {
+      const mapping = references[ALICEJS_REFERENCES_MAPPING];
+      const used_props = [];
+      const used_targets = [];
+      const values = /* @__PURE__ */ new Map();
+      const pairs = [];
+      const partial_update = (target, prop, val) => {
+        if (used_props.includes(prop) && used_targets.includes(target)) {
+          values.get(target)[prop] = val;
+        }
+      };
+      const full_update = () => {
+        const flattened_values = pairs.map(
+          (pair) => values.get(pair[0])[pair[1]]
+        );
+        const value = mapping(...flattened_values.reverse());
+        callback(value);
+      };
+      for (const p of references) {
+        const target = p.target;
+        const prop = p.property;
+        used_props.push(prop);
+        used_targets.push(target);
+        pairs.push([target, prop]);
+        if (!values.has(target)) {
+          values.set(target, {});
+        }
+        partial_update(target, prop, target[prop]);
+        target[ALICEJS_STATEFUL_LISTENERS].push((t, p2, v) => {
+          partial_update(t, p2, v);
+          full_update();
+        });
+      }
+      full_update();
+    } else {
+      const reference = references[references.length - 1];
+      const subscription = (target, prop, val) => {
+        if (prop === reference.property && target === reference.target) {
+          callback(val);
+        }
+      };
+      reference.target[ALICEJS_STATEFUL_LISTENERS].push(subscription);
+      subscription(reference.target, reference.property, reference.target[reference.property]);
+    }
+  }
+  function useValue(references) {
+    let reference = references[references.length - 1];
+    return reference.proxy[reference.property];
+  }
+  function h(type, props, ...children) {
+    if (typeof type === "function") {
+      let newthis = stateful(Object.create(type.prototype));
+      for (const name in props) {
+        const references = props[name];
+        if (isAJSReferences(references) && name.startsWith("bind:")) {
+          let reference = references[references.length - 1];
+          const propname = name.substring(5);
+          if (propname == "this") {
+            reference.proxy[reference.property] = newthis;
+          } else {
+            let isRecursive = false;
+            handle(references, (value) => {
+              if (isRecursive) {
+                isRecursive = false;
+                return;
+              }
+              isRecursive = true;
+              newthis[propname] = value;
+            });
+            handle(use(newthis[propname]), (value) => {
+              if (isRecursive) {
+                isRecursive = false;
+                return;
+              }
+              isRecursive = true;
+              reference.proxy[reference.property] = value;
+            });
+          }
+          delete props[name];
+        }
+      }
+      Object.assign(newthis, props);
+      let slot = [];
+      for (const child of children) {
+        JSXAddChild(child, slot.push.bind(slot));
+      }
+      let elm2 = type.apply(newthis, [slot]);
+      elm2.$ = newthis;
+      newthis.root = elm2;
+      if (newthis.css) {
+        elm2.classList.add(newthis.css);
+        elm2.classList.add("self");
+      }
+      return elm2;
+    }
+    const elm = document.createElement(type);
+    for (const child of children) {
+      JSXAddChild(child, elm.appendChild.bind(elm));
+    }
+    if (!props)
+      return elm;
+    function useProp(name, callback) {
+      if (!(name in props))
+        return;
+      let prop = props[name];
+      callback(prop);
+      delete props[name];
+    }
+    useProp("before", (callback) => {
+      JSXAddChild(callback());
+    });
+    useProp("if", (condition) => {
+      let thenblock = props["then"];
+      let elseblock = props["else"];
+      if (isAJSReferences(condition)) {
+        if (thenblock)
+          elm.appendChild(thenblock);
+        if (elseblock)
+          elm.appendChild(elseblock);
+        handle(condition, (val) => {
+          if (thenblock) {
+            if (val) {
+              thenblock.style.display = "";
+              if (elseblock)
+                elseblock.style.display = "none";
+            } else {
+              thenblock.style.display = "none";
+              if (elseblock)
+                elseblock.style.display = "";
+            }
+          } else {
+            if (val) {
+              elm.style.display = "";
+            } else {
+              elm.style.display = "none";
+            }
+          }
+        });
+      } else {
+        if (thenblock) {
+          if (condition) {
+            elm.appendChild(thenblock);
+          } else if (elseblock) {
+            elm.appendChild(elseblock);
+          }
+        } else {
+          if (condition) {
+            elm.appendChild(thenblock);
+          } else if (elseblock) {
+            elm.appendChild(elseblock);
+          } else {
+            elm.style.display = "none";
+            return document.createTextNode("");
+          }
+        }
+      }
+      delete props["then"];
+      delete props["else"];
+    });
+    if ("for" in props && "do" in props) {
+      const predicate = props["for"];
+      const closure = props["do"];
+      if (isAJSReferences(predicate)) {
+        const __elms = [];
+        let lastpredicate = [];
+        handle(predicate, (val) => {
+          if (Object.keys(val).length && Object.keys(val).length == lastpredicate.length) {
+            let i = 0;
+            for (const index in val) {
+              if (deepEqual(val[index], lastpredicate[index])) {
+                continue;
+              }
+              const part = closure(val[index], index, val);
+              elm.replaceChild(part, __elms[i]);
+              __elms[i] = part;
+              i += 1;
+            }
+            lastpredicate = Object.keys(
+              JSON.parse(JSON.stringify(val))
+            );
+          } else {
+            for (const part of __elms) {
+              part.remove();
+            }
+            for (const index in val) {
+              const value = val[index];
+              const part = closure(value, index, val);
+              if (part instanceof HTMLElement) {
+                __elms.push(part);
+                elm.appendChild(part);
+              }
+            }
+            lastpredicate = [];
+          }
+        });
+      } else {
+        for (const index in predicate) {
+          const value = predicate[index];
+          const part = closure(value, index, predicate);
+          if (part instanceof Node)
+            elm.appendChild(part);
+        }
+      }
+      delete props["for"];
+      delete props["do"];
+    }
+    useProp("after", (callback) => {
+      JSXAddChild(callback());
+    });
+    for (const name in props) {
+      const references = props[name];
+      if (isAJSReferences(references) && name.startsWith("bind:")) {
+        let reference = references[references.length - 1];
+        const propname = name.substring(5);
+        if (propname == "this") {
+          reference.proxy[reference.property] = elm;
+        } else if (propname == "value") {
+          handle(references, (value) => elm.value = value);
+          elm.addEventListener("change", () => {
+            reference.proxy[reference.property] = elm.value;
+          });
+        } else if (propname == "checked") {
+          handle(references, (value) => elm.checked = value);
+          elm.addEventListener("click", () => {
+            reference.proxy[reference.property] = elm.checked;
+          });
+        }
+        delete props[name];
+      }
+    }
+    useProp("class", (classlist) => {
+      if (typeof classlist === "string") {
+        elm.className = classlist;
+        return;
+      }
+      if (isAJSReferences(classlist)) {
+        handle(classlist, (classname) => elm.className = classname);
+        return;
+      }
+      for (const name of classlist) {
+        if (isAJSReferences(name)) {
+          let oldvalue = null;
+          handle(name, (value) => {
+            if (typeof oldvalue === "string") {
+              elm.classList.remove(oldvalue);
+            }
+            elm.classList.add(value);
+            oldvalue = value;
+          });
+        } else {
+          elm.classList.add(name);
+        }
+      }
+    });
+    for (const name in props) {
+      const prop = props[name];
+      if (isAJSReferences(prop)) {
+        handle(prop, (val) => {
+          JSXAddAttributes(elm, name, val);
+        });
+      } else {
+        JSXAddAttributes(elm, name, prop);
+      }
+    }
+    return elm;
+  }
+  function JSXAddChild(child, cb) {
+    if (isAJSReferences(child)) {
+      let appended = [];
+      handle(child, (val) => {
+        if (appended.length > 1) {
+          appended.forEach((n) => n.remove());
+          appended = JSXAddChild(val, cb);
+        } else if (appended.length > 0) {
+          let old = appended[0];
+          appended = JSXAddChild(val, cb);
+          if (appended[0]) {
+            old.replaceWith(appended[0]);
+          } else {
+            old.remove();
+          }
+        } else {
+          appended = JSXAddChild(val, cb);
+        }
+      });
+    } else if (child instanceof Node) {
+      cb(child);
+      return [child];
+    } else if (child instanceof Array) {
+      let elms = [];
+      for (const childchild of child) {
+        elms = elms.concat(JSXAddChild(childchild, cb));
+      }
+      return elms;
+    } else {
+      let node = document.createTextNode(child);
+      cb(node);
+      return [node];
+    }
+  }
+  function JSXAddAttributes(elm, name, prop) {
+    if (typeof prop === "function" && name === "mount") {
+      prop(elm);
+      return;
+    }
+    if (typeof prop === "function" && name.startsWith("on:")) {
+      const names = name.substring(3);
+      for (const name2 of names.split("$")) {
+        elm.addEventListener(name2, (...args) => {
+          window.$el = elm;
+          prop(...args);
+        });
+      }
+      return;
+    }
+    if (typeof prop === "function" && name.startsWith("observe")) {
+      const observerclass = window[`${name.substring(8)}Observer`];
+      if (!observerclass) {
+        console.error(`Observer ${name} does not exist`);
+        return;
+      }
+      const observer = new observerclass((entries) => {
+        for (const entry of entries) {
+          window.$el = elm;
+          prop(entry);
+        }
+      });
+      observer.observe(elm);
+      return;
+    }
+    elm.setAttribute(name, prop);
+  }
+  function scopify_css(uid, css2) {
+    const virtualDoc = document.implementation.createHTMLDocument("");
+    const virtualStyleElement = document.createElement("style");
+    virtualDoc.body.appendChild(virtualStyleElement);
+    let cssParsed = "";
+    virtualStyleElement.textContent = css2;
+    for (const rule2 of virtualStyleElement.sheet.cssRules) {
+      rule2.selectorText = rule2.selectorText.includes("self") ? `.${uid}.self${rule2.selectorText.replace("self", "")}` : `.${uid} ${rule2.selectorText}`;
+      cssParsed += `${rule2.cssText}
+`;
+    }
+    return cssParsed;
+  }
+  function tagcss(strings, values, isblock) {
+    const uid = `dream-${Array(16).fill(0).map(() => {
+      return Math.floor(Math.random() * 16).toString(16);
+    }).join("")}`;
+    const styleElement = document.createElement("style");
+    document.head.appendChild(styleElement);
+    const flattened_template = [];
+    for (const i in strings) {
+      flattened_template.push(strings[i]);
+      if (values[i]) {
+        const prop = values[i];
+        if (isAJSReferences(prop)) {
+          const current_i = flattened_template.length;
+          let oldparsed;
+          handle(prop, (val) => {
+            flattened_template[current_i] = String(val);
+            let parsed = flattened_template.join("");
+            if (parsed != oldparsed)
+              if (isblock)
+                styleElement.textContent = scopify_css(
+                  uid,
+                  parsed
+                );
+              else
+                styleElement.textContent = `.${uid} { ${parsed}; }`;
+            oldparsed = parsed;
+          });
+        } else {
+          flattened_template.push(String(prop));
+        }
+      }
+    }
+    if (isblock) {
+      styleElement.textContent = scopify_css(
+        uid,
+        flattened_template.join("")
+      );
+    } else {
+      styleElement.textContent = `.${uid} { ${flattened_template.join("")}; }`;
+    }
+    return uid;
+  }
+  function rule(strings, ...values) {
+    return tagcss(strings, values, false);
+  }
+  function css(strings, ...values) {
+    return tagcss(strings, values, true);
+  }
+  function html(strings, ...values) {
+    let flattened = "";
+    let markers = {};
+    for (const i in strings) {
+      let string = strings[i];
+      let value = values[i];
+      flattened += string;
+      if (i < values.length) {
+        let dupe = Object.values(markers).findIndex((v) => v == value);
+        if (dupe !== -1) {
+          flattened += Object.keys(markers)[dupe];
+        } else {
+          let marker = "m" + Array(16).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+          markers[marker] = value;
+          flattened += marker;
+        }
+      }
+    }
+    let dom = new DOMParser().parseFromString(flattened, "text/html");
+    if (dom.body.children.length !== 1)
+      throw "html builder needs exactly one child";
+    function wraph(elm) {
+      let nodename = elm.nodeName.toLowerCase();
+      if (nodename === "#text")
+        return elm.textContent;
+      if (nodename in markers)
+        nodename = markers[nodename];
+      let children = [...elm.childNodes].map(wraph);
+      for (let i = 0; i < children.length; i++) {
+        let text = children[i];
+        if (typeof text !== "string")
+          continue;
+        for (const [marker, value] of Object.entries(markers)) {
+          if (!text)
+            break;
+          if (!text.includes(marker))
+            continue;
+          let before;
+          [before, text] = text.split(marker);
+          children = [
+            ...children.slice(0, i),
+            before,
+            value,
+            text,
+            ...children.slice(i + 1)
+          ];
+          i += 2;
+        }
+      }
+      let attributes = {};
+      for (const attr of [...elm.attributes]) {
+        let val = attr.nodeValue;
+        if (val in markers)
+          val = markers[val];
+        attributes[attr.name] = val;
+      }
+      return h(nodename, attributes, children);
+    }
+    return wraph(dom.body.children[0]);
+  }
+  function deepEqual(object1, object2) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+    for (const key of keys1) {
+      const val1 = object1[key];
+      const val2 = object2[key];
+      const areObjects = isObject(val1) && isObject(val2);
+      if (areObjects && !deepEqual(val1, val2) || !areObjects && val1 !== val2) {
+        return false;
+      }
+    }
+    return true;
+  }
+  function isObject(object) {
+    return object != null && typeof object === "object";
+  }
+})();
