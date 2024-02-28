@@ -12,11 +12,11 @@ chrome.storage.local.get("palette", (stored: any) => {
   Object.assign(palette, stored.palette);
 })
 
-function App(this: DLComponent<{
+const App: Component<{}, {
   tree: TreeNode,
   activetab: number | null,
   oldactivetab: number | null,
-}>) {
+}> = function() {
   this.css = css`
 self {
   background-color: ${use(palette.base)};
@@ -24,6 +24,8 @@ self {
   width: 100%;
   height: 100%;
   overflow:hidden;
+  display: flex;
+  flex-direction: column;
 }
 #treecontainer{
   height:100%;

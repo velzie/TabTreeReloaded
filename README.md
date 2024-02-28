@@ -17,3 +17,5 @@ make all
 It will generate an `extension.crx` at root and an xpi file for firefox inside `web-ext-artifacts/`.
 
 Alternatively, you can run `make tsc` and load the `extensions/` directory as an unpacked/temporary extension, or use web-ext run
+
+please go into about:config and set `browser.sessionstore.resume_from_crash` to false

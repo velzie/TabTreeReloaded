@@ -1,6 +1,6 @@
-function Toolbar(this: DLComponent<{
+const Toolbar: Component<{}, {
   showsettings: boolean,
-}>) {
+}> = function() {
   this.css = css`
   self {
     position:sticky;
@@ -83,9 +83,11 @@ function Toolbar(this: DLComponent<{
   )
 }
 
-function Input(this: DLComponent<{
+const Input: Component<{
+}, {
   value: string
-}>, slot) {
+  children: any
+}> = function() {
   this.css = css`
 self {
   display: flex;
@@ -113,7 +115,7 @@ input {
 
   return (
     <div>
-      <div class="text">{slot}</div>
+      <div class="text">{this.children}</div>
       <input bind:value={use(this.value)} />
     </div>
   )
@@ -122,7 +124,7 @@ input {
 
 function savedata() {
   chrome.storage.local.get(["root", "palette"], data => {
-    let elm = <a href={"data:application/json," + encodeURIComponent(JSON.stringify(data))} download="tabtreereloaded-save.json" />
+    let elm: any = <a href={"data:application/json," + encodeURIComponent(JSON.stringify(data))} download="tabtreereloaded-save.json" />
 
     document.body.appendChild(elm);
     elm.click();
@@ -133,7 +135,7 @@ function savedata() {
 function loaddata() {
   const reader = new FileReader();
 
-  let elm = <input type="file" accept="application/json" on:change={() => {
+  let elm: any = <input type="file" accept="application/json" on:change={() => {
     let file = elm.files[0];
     if (!file) return;
     reader.onload = (e) => {

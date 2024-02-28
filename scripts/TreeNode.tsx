@@ -11,13 +11,14 @@ window.addEventListener("contextmenu", e => {
 
 
 
-type TreeNode = DLComponent<{
+type TreeNode = ThisParameterType<typeof TreeNode>;
+const TreeNode: Component<any, {
   showInsert: boolean,
   handleDrag: Function,
   handleDragEnd: Function,
   parent: TreeNode | null,
   content: string
-  children: HTMLLIElement[]
+  children: DLElement<TreeNode>[]
   hoverfx: boolean,
   height: number | null,
   scrh: number,
@@ -34,9 +35,7 @@ type TreeNode = DLComponent<{
   top: () => TreeNode,
   clearInsert: () => void,
   findId: (id: number | null) => TreeNode | null,
-}>;
-
-function TreeNode(this: TreeNode) {
+}> = function() {
   this.hoverfx = false;
   this.dragging = false;
 
@@ -55,12 +54,13 @@ function TreeNode(this: TreeNode) {
     padding-bottom: 1px;
     margin-bottom: -1px;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .content {
     padding-left:15px;
     background-color: ${use(this.activeId, (active) => active === this.id ? palette.raised : "transparent")} !important;
-    background: url(img/${use([this.children, this.collapsed], (c, children) => c ? "minimized" : (children.length > 0 ? "unminimized" : "no"))}_children.png) 0px -1px no-repeat;
+    background: url(img/${use([this.children, this.collapsed] as any, ((c, children) => c ? "minimized" : (children.length > 0 ? "unminimized" : "no")) as any)}_children.png) 0px -1px no-repeat;
     color: ${use(this.id, id => id === -1 ? palette.muted : palette.text)}
   }
   .content > div{
@@ -116,7 +116,7 @@ function TreeNode(this: TreeNode) {
             child.$.showInsert = true;
             // @ts-expect-error
             wasHovering?.hoverfx = false;
-            wasInserting = child.$;
+            wasInserting = child.$ as any;
             return;
           }
         }
@@ -124,7 +124,7 @@ function TreeNode(this: TreeNode) {
         // @ts-expect-error
         wasHovering?.hoverfx = false;
         target.hoverfx = true;
-        wasHovering = target;
+        wasHovering = target as any;
       }}
       on:dragend={(e: DragEvent) => {
         // @ts-expect-error
@@ -152,13 +152,13 @@ function TreeNode(this: TreeNode) {
           target.children = target.children;
           target.children = target.children;
 
-          this.parent = target;
+          this.parent = target as any;
           return;
         }
 
         this.parent!.children = this.parent!.children.filter(e => e !== this.root);
         target.children = [...target.children, this.root];
-        this.parent = target;
+        this.parent = target as any;
       }}
       on:click={(e: Event) => {
         e.stopPropagation();
