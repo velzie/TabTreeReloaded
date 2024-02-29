@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "TabTree Reloaded",
   "description": "A feature-packed vertical tab tree for power users.",
-  "version": "2.1.4",
+  "version": "2.1.6",
 
   "background": {
     "scripts": [
